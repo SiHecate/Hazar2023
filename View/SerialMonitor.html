@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serial Port Reader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; 
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #dataDisplay {
+            font-size: 13px;
+            background-color: #1e1e1e;
+            padding: 10px;
+            border-radius: 25px;
+            max-width: 720px;
+            margin: 0 auto;
+            overflow-y: auto; 
+            height: 720px;
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Serial Port Reader</h1>
+    <div id="dataDisplay"></div>
+
+    <div id="controls">
+        <button onclick="startReading()">Başlat</button>
+        <button onclick="stopReading()">Durdur</button>
+    </div>
+
+    <script>
+        var readingInterval;
+
+        function fetchData() {
+            fetch('/serial-read')
+                .then(response => response.json())
+                .then(data => {
+                    var dataDisplay = document.getElementById('dataDisplay');
+                    dataDisplay.innerHTML += '<p>Data: ' + data.data + '</p>';
+                    dataDisplay.scrollTop = dataDisplay.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    var dataDisplay = document.getElementById('dataDisplay');
+                    dataDisplay.innerHTML += '<p>Error: ' + error.message + '</p>';
+                    dataDisplay.scrollTop = dataDisplay.scrollHeight;
+                });
+        }
+
+        function startReading() {
+            readingInterval = setInterval(fetchData, 500);
+        }
+
+        function stopReading() {
+            clearInterval(readingInterval);
+        }
+    </script>
+</body>
+</html>
