@@ -22,15 +22,16 @@ services:
   hazar:
     networks:
       - hazar
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: app
-    ports: 
-      - 8080:8080
-    volumes: 
-      - .:/app 
-
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    devices:
+      - "/dev/ttyUSB5:/dev/ttyUSB0"
 
   prometheus:
     networks:
