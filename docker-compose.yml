@@ -26,12 +26,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: app
+    privileged: true  # --privileged modu
     ports:
       - "8080:8080"
     volumes:
       - .:/app
-    devices:
-      - "/dev/ttyUSB5:/dev/ttyUSB0"
+
 
   prometheus:
     networks:
