@@ -25,6 +25,4 @@ func Router(app *fiber.App) {
 		return c.SendString("Serial Communication denemesi")
 	})
 	serial.Post("/connection", controller.ConnectionHandler)
-	serial.Get("/ports", controller.ConnectedPorts)
-	// serial.Get("/ports", controller.SerialFindHandler)
 }

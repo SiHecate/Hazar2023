@@ -23,7 +23,7 @@ func StartWebSocket(app *fiber.App) {
 			}
 
 			// Belirli bir süre bekletme ekleyerek yavaş alım sağla
-			time.Sleep(250 * time.Millisecond)
+			time.Sleep(1000 * time.Millisecond)
 		}
 	}))
 

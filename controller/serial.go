@@ -1,11 +1,14 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
+	model "hazar/Model"
+	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	"github.com/hedhyw/Go-Serial-Detector/pkg/v1/serialdet"
 	"github.com/tarm/serial"
 )
 
@@ -43,18 +46,6 @@ func ConnectionHandler(c *fiber.Ctx) error {
 	return c.JSON(responseData)
 }
 
-func ConnectedPorts(c *fiber.Ctx) error {
-	if list, err := serialdet.List(); err == nil {
-		fmt.Println("Connected serial ports:")
-		for _, p := range list {
-			fmt.Println(p)
-		}
-		return c.SendString("List of connected serial ports printed to console.")
-	} else {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
-	}
-}
-
 func SerialReadHandler(ws *websocket.Conn) error {
 	if SerialPort == nil {
 		return ws.WriteJSON(map[string]string{"error": "Serial port is not open"})
@@ -66,6 +57,115 @@ func SerialReadHandler(ws *websocket.Conn) error {
 		return ws.WriteJSON(map[string]string{"error": err.Error()})
 	}
 
-	responseData := map[string]string{"data": string(buf[:n])}
+	// Create a struct to hold the parsed data
+	var data model.SensorData
+
+	fields := strings.Fields(string(buf[:n]))
+	for i := 0; i < len(fields); i += 2 {
+		if i+1 >= len(fields) {
+			break
+		}
+		switch fields[i] {
+		case "encoder1:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Encoder1 = value
+
+		case "encoder2:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Encoder2 = value
+
+		case "encoder3:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Encoder3 = value
+
+		case "encoder4:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Encoder4 = value
+
+		case "Ax:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Ax = value
+
+		case "Ay:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Ay = value
+
+		case "Az:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Az = value
+
+		case "Rx:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Rx = value
+
+		case "Ry:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Ry = value
+
+		case "Rz:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Rz = value
+
+		case "Altitude:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Altitude = value
+
+		case "Temp:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Temp = value
+
+		case "Ayaj:":
+			value, err := strconv.Atoi(fields[i+1])
+			if err != nil {
+				return ws.WriteJSON(map[string]string{"error": err.Error()})
+			}
+			data.Ayak = value
+		}
+	}
+
+	// Convert the struct to JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return ws.WriteJSON(map[string]string{"error": err.Error()})
+	}
+
+	// Send JSON data through WebSocket
+	responseData := map[string]string{"data": string(jsonData)}
 	return ws.WriteJSON(responseData)
 }
