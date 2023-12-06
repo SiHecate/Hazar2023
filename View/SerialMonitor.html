@@ -64,19 +64,16 @@
         var readingInterval;
 
         function fetchData() {
-            fetch('/serial-read')
-                .then(response => response.json())
-                .then(data => {
-                    var dataDisplay = document.getElementById('dataDisplay');
-                    dataDisplay.innerHTML += '<p>Data: ' + data.data + '</p>';
-                    dataDisplay.scrollTop = dataDisplay.scrollHeight;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    var dataDisplay = document.getElementById('dataDisplay');
-                    dataDisplay.innerHTML += '<p>Error: ' + error.message + '</p>';
-                    dataDisplay.scrollTop = dataDisplay.scrollHeight;
-                });
+            fetch('/serial/read', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+            }).then(response => response.json())
+            .then(data => {
+                console.log('Serial data:', data.data);
+            });
         }
 
         function startReading() {

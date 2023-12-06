@@ -6,6 +6,7 @@ require github.com/gofiber/fiber/v2 v2.51.0
 
 require (
 	github.com/creack/goselect v0.1.2 // indirect
+	github.com/hedhyw/Go-Serial-Detector v1.0.0-rc1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
