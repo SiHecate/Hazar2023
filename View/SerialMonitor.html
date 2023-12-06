@@ -14,12 +14,12 @@
             text-align: center;
             padding: 20px;
         }
-
+    
         h1 {
             font-size: 24px;
             margin-bottom: 20px;
         }
-
+    
         #dataDisplay {
             font-size: 13px;
             background-color: #1e1e1e;
@@ -30,11 +30,11 @@
             overflow-y: auto; 
             height: 720px;
         }
-
+    
         #controls {
             margin-top: 20px;
         }
-
+    
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -45,7 +45,7 @@
             border: none;
             border-radius: 5px;
         }
-
+    
         button:hover {
             background-color: #0056b3;
         }
@@ -62,26 +62,37 @@
 
     <script>
         var readingInterval;
+        var socket = new WebSocket("ws://localhost:8080/websocket");
 
-        function fetchData() {
-            fetch('/serial/read', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-            }).then(response => response.json())
-            .then(data => {
-                console.log('Serial data:', data.data);
-            });
-        }
+        socket.onopen = (event) => {
+            console.log("WebSocket connection opened:", event);
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('Serial data:', data.data);
+            updateDataDisplay(data.data);
+        };
+
+        socket.onclose = (event) => {
+            console.log("WebSocket connection closed:", event);
+        };
+
+        socket.onerror = (event) => {
+            console.error("WebSocket error:", event);
+        };
 
         function startReading() {
-            readingInterval = setInterval(fetchData, 500);
+            socket.send("start"); // Send a start signal to the server
         }
 
         function stopReading() {
-            clearInterval(readingInterval);
+            socket.send("stop"); // Send a stop signal to the server
+        }
+
+        function updateDataDisplay(serialData) {
+            const dataDisplay = document.getElementById("dataDisplay");
+            dataDisplay.innerHTML += `<p>${serialData}</p>`;
         }
     </script>
 </body>

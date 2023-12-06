@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/hedhyw/Go-Serial-Detector/pkg/v1/serialdet"
 	"github.com/tarm/serial"
 )
@@ -54,17 +55,17 @@ func ConnectedPorts(c *fiber.Ctx) error {
 	}
 }
 
-func SerialReadHandler(c *fiber.Ctx) error {
+func SerialReadHandler(ws *websocket.Conn) error {
 	if SerialPort == nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("Serial port is not open")
+		return ws.WriteJSON(map[string]string{"error": "Serial port is not open"})
 	}
 
 	buf := make([]byte, 128)
 	n, err := SerialPort.Read(buf)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		return ws.WriteJSON(map[string]string{"error": err.Error()})
 	}
 
 	responseData := map[string]string{"data": string(buf[:n])}
-	return c.JSON(responseData)
+	return ws.WriteJSON(responseData)
 }

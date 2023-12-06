@@ -20,12 +20,11 @@ func Router(app *fiber.App) {
 	})
 
 	serial := app.Group("/serial")
-	serial.Get("ab123", func(c *fiber.Ctx) error {
+
+	serial.Get("/ab123", func(c *fiber.Ctx) error {
 		return c.SendString("Serial Communication denemesi")
 	})
-	serial.Post("connection", controller.ConnectionHandler)
-	serial.Get("read", controller.SerialReadHandler)
-	serial.Get("ports", controller.ConnectedPorts)
-	// serial.Get("ports", controller.SerialFindHandler)
-
+	serial.Post("/connection", controller.ConnectionHandler)
+	serial.Get("/ports", controller.ConnectedPorts)
+	// serial.Get("/ports", controller.SerialFindHandler)
 }
