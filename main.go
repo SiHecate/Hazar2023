@@ -2,6 +2,7 @@ package main
 
 import (
 	// "hazar/core/database"
+	"hazar/core/database"
 	"hazar/router"
 
 	"fmt"
@@ -13,10 +14,11 @@ import (
 )
 
 func main() {
-	fmt.Println("Hazar say hello!")
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	fmt.Println("Hazar say hello!")
+	database.Connect()
 	app := fiber.New()
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${status} - ${method} ${path}\n",

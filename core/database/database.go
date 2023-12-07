@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	model "hazar/Model"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -12,6 +13,7 @@ var Conn *gorm.DB
 
 func Connect() {
 	Database()
+	MigrateTables()
 }
 
 func Database() {
@@ -31,4 +33,14 @@ func Database() {
 		fmt.Print("Database hatasi")
 		panic(err)
 	}
+}
+
+func MigrateTables() error {
+	err := Conn.AutoMigrate(
+		&model.SensorData{},
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	model "hazar/Model"
+	"hazar/core/database"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -51,16 +53,15 @@ func SerialReadHandler(ws *websocket.Conn) error {
 		return ws.WriteJSON(map[string]string{"error": "Serial port is not open"})
 	}
 
-	buf := make([]byte, 128)
-	n, err := SerialPort.Read(buf)
+	serialBuf := make([]byte, 128)
+	n, err := SerialPort.Read(serialBuf)
 	if err != nil {
 		return ws.WriteJSON(map[string]string{"error": err.Error()})
 	}
 
-	// Create a struct to hold the parsed data
 	var data model.SensorData
 
-	fields := strings.Fields(string(buf[:n]))
+	fields := strings.Fields(string(serialBuf[:n]))
 	for i := 0; i < len(fields); i += 2 {
 		if i+1 >= len(fields) {
 			break
@@ -159,6 +160,8 @@ func SerialReadHandler(ws *websocket.Conn) error {
 		}
 	}
 
+	data.Date = time.Now()
+
 	// Convert the struct to JSON
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -167,5 +170,10 @@ func SerialReadHandler(ws *websocket.Conn) error {
 
 	// Send JSON data through WebSocket
 	responseData := map[string]string{"data": string(jsonData)}
+
+	if err := database.Conn.Create(&data).Error; err != nil {
+		return err
+	}
+
 	return ws.WriteJSON(responseData)
 }
