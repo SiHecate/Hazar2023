@@ -44,7 +44,7 @@ func ConnectionHandler(c *fiber.Ctx) error {
 
 	SerialPort = s
 
-	responseData := map[string]string{"status": "Connection success!"}
+	responseData := map[string]string{"status": "Connection success!", "Port": connectionRequest.PortName}
 	return c.JSON(responseData)
 }
 
