@@ -21,8 +21,6 @@ func StartWebSocket(app *fiber.App) {
 				log.Println("SerialReadHandler error:", err)
 				break
 			}
-
-			// Belirli bir süre bekletme ekleyerek yavaş alım sağla
 			time.Sleep(1000 * time.Millisecond)
 		}
 	}))

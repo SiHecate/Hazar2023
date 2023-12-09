@@ -22,8 +22,34 @@ scrape_configs:
   - targets:
       - localhost
     labels:
-      job: containerlogs
+      job: containerlogsA
       __path__: /var/lib/docker/containers/*/*log
+
+- job_name: serial_data
+  static_configs:
+    - targets:
+        - localhost
+  relabel_configs:
+    - source_labels: ['log_message']
+      regex: 'encoder1: (.*)'
+      target_label: 'encoder1'
+    - source_labels: ['log_message']
+      regex: 'Ax: (.*)'
+      target_label: 'ax'
+    - source_labels: ['log_message']
+      regex: 'Altitude: (.*)'
+      target_label: 'altitude'
+    - source_labels: ['log_message']
+      regex: 'Temp: (.*)'
+      target_label: 'temp'
+    - source_labels: ['log_message']
+      regex: 'Ayak: (.*)'
+      target_label: 'ayak'
+    - source_labels: ['container_name']
+      regex: 'hazar'
+      action: keep
+      target_label: 'container_name'
+
 
   pipeline_stages:
   - json:

@@ -177,3 +177,17 @@ func SerialReadHandler(ws *websocket.Conn) error {
 
 	return ws.WriteJSON(responseData)
 }
+
+func GetSerialData(c *fiber.Ctx) error {
+	// todo: özel databaseler açıp onları tek tek göstermek için fonksiyon eklenecek.
+	var existingData []model.SensorData
+	if err := database.Conn.Find(&existingData).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Database error"})
+	}
+
+	if len(existingData) == 0 {
+		return c.Status(404).JSON(fiber.Map{"error": "No products found"})
+	}
+
+	return c.JSON(fiber.Map{"message": existingData})
+}
