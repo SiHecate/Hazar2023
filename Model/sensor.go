@@ -6,7 +6,8 @@ import (
 
 // Veri yapısı (struct)
 type SensorData struct {
-	Date     time.Time `json:"date"`
+	Time     time.Time `json:"time"`
+	TestNo   uint      `json:"test_no" gorm:"autoIncrement"`
 	Encoder1 int       `json:"encoder1"`
 	Encoder2 int       `json:"encoder2"`
 	Encoder3 int       `json:"encoder3"`

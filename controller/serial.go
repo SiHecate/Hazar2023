@@ -160,7 +160,7 @@ func SerialReadHandler(ws *websocket.Conn) error {
 		}
 	}
 
-	data.Date = time.Now()
+	data.Time = time.Now()
 
 	// Convert the struct to JSON
 	jsonData, err := json.Marshal(data)

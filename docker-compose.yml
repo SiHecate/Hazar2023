@@ -9,7 +9,7 @@ services:
     networks:
       - hazar
     image: postgres:latest
-    container_name: zenithar_postgres
+    container_name: postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -50,11 +50,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - ./:/hazar_yer_istasyonu_2024/datasources.yml
 
   loki:
     networks:
@@ -67,18 +63,6 @@ services:
       - "3100:3100"
     command: "-config.file=/etc/loki/local-config.yml"
 
-  promtail:
-    networks:
-      - hazar
-    image: grafana/promtail:latest
-    container_name: promtail
-    volumes:
-      - /var/log:/var/log
-      - /var/lib/docker/containers:/var/lib/docker/containers
-      - ./promtail-config.yml:/etc/promtail/promtail-config.yml
-    command: "-config.file=/etc/promtail/promtail-config.yml"
-    depends_on:
-      - loki
 
 volumes:
   db:
